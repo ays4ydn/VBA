@@ -671,8 +671,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
         }
-        
-        animatePlanetsAndMars();
+        if (currentStage === 2) {
+            animatePlanetsAndMars();
+        }
     }
 
     window.addEventListener("resize", initCanvas);
