@@ -1,0 +1,583 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Montserrat:wght@500;700;900&display=swap');
+
+:root {
+    --bg-color: #0b0713; /* Deep dark purple/blue background similar to reference */
+    --text-main: #ffffff;
+    --text-muted: #8b8b99;
+    --gradient-text: linear-gradient(90deg, #66fcf1, #a64aff, #ff4af1);
+    --gradient-btn: linear-gradient(90deg, #a855f7, #ec4899);
+    --btn-shadow: rgba(236, 72, 153, 0.4);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Outfit', sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden; /* Hide scroll as it's a centered landing page */
+    cursor: none; /* Gizliyoruz çünkü artık fareniz Mars olacak! */
+}
+
+/* Canvas Background */
+#particle-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0; /* Gezegenler birinci sayfadaki yazıların altına gömüldü! */
+    pointer-events: none;
+}
+
+.container {
+    position: relative;
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    max-width: 800px;
+    padding: 2rem;
+    animation: fadeUp 1s ease 0.2s both;
+}
+
+/* Profile Picture */
+.profile-img-container {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden; /* Daire şeklini korumak için */
+}
+
+.profile-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Badge */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1.75rem;
+    border: 1px solid rgba(0, 255, 255, 0.25);
+    border-radius: 9999px;
+    background: rgba(10, 25, 40, 0.5);
+    color: #4df;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    margin-bottom: 2rem;
+    text-transform: uppercase;
+    backdrop-filter: blur(5px);
+}
+
+.badge .star {
+    font-size: 0.85rem;
+    color: #4df;
+}
+
+/* Title */
+.main-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(3.5rem, 12vw, 8rem);
+    font-weight: 900;
+    letter-spacing: -2px;
+    background: var(--gradient-text);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 1rem;
+    line-height: 1;
+    filter: drop-shadow(0 0 15px rgba(166, 74, 255, 0.2));
+}
+
+/* Subtitle */
+.subtitle {
+    font-size: 1.25rem;
+    color: var(--text-muted);
+    margin-bottom: 3.5rem;
+    font-weight: 400;
+    max-width: 500px;
+}
+
+/* Primary Button */
+.primary-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    background: var(--gradient-btn);
+    color: white;
+    text-decoration: none;
+    padding: 1.1rem 3.5rem;
+    border-radius: 9999px;
+    font-size: 1.15rem;
+    font-weight: 700;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 25px var(--btn-shadow);
+    margin-bottom: 2.5rem;
+}
+
+.primary-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 35px var(--btn-shadow);
+    filter: brightness(1.15);
+}
+
+.icon-pulse {
+    animation: simplePulse 2s infinite;
+}
+
+@keyframes simplePulse {
+    0% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.15); opacity: 1; text-shadow: 0 0 10px #fff; }
+    100% { transform: scale(1); opacity: 0.8; }
+}
+
+/* Secondary Buttons */
+.secondary-btns {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.sec-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(30, 30, 40, 0.6);
+    color: #e0e0e0;
+    text-decoration: none;
+    padding: 0.8rem 2.25rem;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+}
+
+.sec-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+    color: #fff;
+}
+
+/* Footer */
+footer {
+    position: absolute;
+    bottom: 2.5rem;
+    color: #555;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    font-family: monospace;
+    z-index: 10;
+}
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* =========================================
+   MARS, PLANETS & TWO FAT CATS LOGIC
+   ========================================= */
+
+.pet-cat {
+    position: fixed;
+    top: -100px;
+    left: -100px;
+    width: 200px;
+    height: 250px;
+    pointer-events: none;
+    z-index: 9998;
+    user-select: none;
+    will-change: transform;
+    /* Resmi klasörünüzde bulunduğu ismiyle arıyor: cats.jpg veya cats.png */
+    background-image: url('cats.jpg');
+    background-size: 200% auto; /* Resmi ikiye bölerek gösterir (solda Elton, sağda Madonna) */
+    background-repeat: no-repeat;
+    filter: drop-shadow(0 20px 30px rgba(0,0,0,0.8));
+}
+
+.sir-elton {
+    /* Turuncu Sir Elton Fotoğrafın solunda */
+    background-position: left center;
+}
+
+.madonna {
+    /* Gri Madonna Fotoğrafın sağında */
+    background-position: right center;
+    width: 190px;
+    height: 240px; 
+}
+
+/* Kedi Konuşma Balonu */
+.speech-bubble {
+    position: absolute;
+    top: -55px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #ffffff;
+    color: #1a1a2e;
+    padding: 12px 18px;
+    border-radius: 20px;
+    font-size: 16px;
+    font-weight: 800;
+    font-family: 'Outfit', sans-serif;
+    opacity: 0;
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+    pointer-events: none;
+    white-space: nowrap;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    z-index: 10000;
+}
+
+.speech-bubble.show, .speech-bubble.active {
+    opacity: 1;
+    pointer-events: auto; /* Yazı çıktığında tıklanabilir hale gelir */
+}
+
+.speech-bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 10px 10px 0;
+    border-style: solid;
+    border-color: #ffffff transparent transparent transparent;
+}
+
+/* =========================================
+   STAGE 2: HOGWARTS & DRAGON ROOM
+   ========================================= */
+
+#stage2-container.hogwarts-scene {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    transition: opacity 2s ease-in-out;
+    background-image: url('./hogwarts.png');
+    background-size: cover;
+    background-position: center 20%; /* Kalenin olduğu üst kısımlara odaklanması için */
+    background-color: #050510;
+    /* Fırtına efekti! */
+    animation: lightningStorm 10s infinite;
+}
+
+@keyframes lightningStorm {
+    0%, 93%, 97%, 100% { filter: brightness(1) contrast(1); background-color: #050510; }
+    94%, 98% { filter: brightness(1.5) contrast(1.2); background-color: #3b3b55; }
+    95% { filter: brightness(2) contrast(1.3); background-color: #8b8bff; }
+}
+
+#stage2-container.hogwarts-scene.active {
+    opacity: 1 !important;
+    pointer-events: all !important;
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 5vh;
+}
+
+.stage2-profile {
+    margin-bottom: 2rem;
+    z-index: 2006;
+}
+.hidden-explore-btn {
+    position: absolute;
+    top: 50%; left: 50%; /* Tam ortaya oturtuldu */
+    transform: translate(-50%, -50%); /* Scale Olayı Kaldırıldı */
+    opacity: 0;
+    
+    background: rgba(10, 50, 60, 0.9);
+    border: 3px solid #00ffcc;
+    color: #ffffff;
+    padding: 12px 25px;
+    font-size: 1.5rem;
+    font-weight: 800;
+    border-radius: 40px;
+    text-transform: uppercase;
+    text-decoration: none;
+    box-shadow: 0 0 40px rgba(0, 255, 204, 1), inset 0 0 15px rgba(255, 255, 255, 0.5);
+    
+    pointer-events: all;
+    z-index: 1005;
+    transition: opacity 3.5s ease-out, box-shadow 3.5s ease-in;
+}
+
+.hidden-explore-btn.show {
+    opacity: 1; 
+    animation: pulseDragonBtn 2s infinite alternate 3.5s; /* Maske açılıncaya kadar pulse bekle */
+}
+
+@keyframes pulseDragonBtn {
+    0% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 50px rgba(255, 60, 0, 1); }
+    100% { transform: translate(-50%, -50%) scale(1.05); box-shadow: 0 0 100px rgba(255, 200, 0, 1); }
+}
+
+.hidden-explore-btn:hover {
+    background: rgba(100, 0, 0, 1);
+    box-shadow: 0 0 100px rgba(255, 255, 0, 1);
+    transform: translate(-50%, -50%) scale(1.15) !important;
+}
+
+.monster-buttons-wrapper {
+    position: absolute;
+    bottom: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    z-index: 1002;
+}
+
+.monster-buttons {
+    display: flex;
+    gap: 30px;
+    background: rgba(0, 0, 20, 0.6);
+    padding: 20px;
+    border-radius: 20px;
+    border: 2px solid rgba(138, 43, 226, 0.4);
+    backdrop-filter: blur(10px);
+}
+
+.monster-btn {
+    background: rgba(30, 0, 50, 0.8);
+    border: 2px solid #a855f7;
+    border-radius: 15px;
+    padding: 15px 30px;
+    color: white;
+    text-decoration: none;
+    font-size: 1.2rem;
+    font-weight: bold;
+    box-shadow: 0 0 15px rgba(168, 85, 247, 0.5);
+    transition: opacity 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), transform 0.3s ease-out;
+}
+
+#harry-bubble.active {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+}
+
+.monster-btn:hover {
+    transform: translateY(-10px) scale(1.1);
+    border-color: #ffd700;
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+}
+
+#harry-potter-toy {
+    position: absolute;
+    top: -120px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 120px;
+    transition: left 0.5s ease-out, top 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+    z-index: 1010;
+    cursor: pointer;
+    pointer-events: all;
+}
+
+/* Yorulunca aşağı çöker (Oturma) */
+#harry-potter-toy.sitting {
+    top: -95px;
+}
+
+.harry-torso, .harry-legs {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
+    transition: transform 0.2s;
+}
+
+/* Belden Yukarısı */
+.harry-torso img {
+    width: 100%;
+    clip-path: polygon(0 0, 100% 0, 100% 65%, 0 65%);
+}
+
+/* Belden Aşağısı */
+.harry-legs img {
+    width: 100%;
+    clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+}
+
+.harry-legs {
+    transform-origin: center 65%;
+}
+
+/* Yürüyüş Animasyonları */
+#harry-potter-toy.walking .harry-torso {
+    animation: walkBob 0.3s steps(2, end) infinite alternate;
+}
+
+#harry-potter-toy.walking .harry-legs {
+    animation: swingLegs 0.3s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite alternate;
+}
+
+@keyframes walkBob {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-3px); }
+}
+
+@keyframes swingLegs {
+    0% { transform: rotate(-25deg); }
+    100% { transform: rotate(25deg); }
+}
+
+#harry-bubble {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%) scale(0);
+    background: white;
+    color: black;
+    padding: 8px 12px;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 900;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+}
+
+#harry-bubble.active {
+    transform: translateX(-50%) scale(1);
+    opacity: 1;
+}
+
+#harry-bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 8px 8px 0;
+    border-style: solid;
+    border-color: white transparent transparent transparent;
+}
+
+/* =========================================
+   STAGE 2: GALAXY ROOM (Karadelik Boyutu)
+   ========================================= */
+
+#stage2-container {
+    position: absolute;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    transition: opacity 1.5s ease-in-out;
+    pointer-events: none;
+}
+
+#stage2-container.active {
+    opacity: 1 !important;
+    pointer-events: all;
+}
+
+.boss-text {
+    font-size: 3.5rem;
+    font-weight: 900;
+    text-align: center;
+    background: linear-gradient(135deg, #00ffcc, #7a00ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 15px rgba(0, 255, 204, 0.8));
+    animation: warpText 3s infinite alternate ease-in-out;
+    margin-bottom: 50px;
+    z-index: 101;
+}
+
+@keyframes warpText {
+    0% { transform: scale(1) rotate(-1deg); filter: drop-shadow(0 0 10px rgba(0, 255, 204, 0.5)); }
+    100% { transform: scale(1.05) rotate(1deg); filter: drop-shadow(0 0 25px rgba(122, 0, 255, 0.9)); }
+}
+
+.monster-buttons {
+    display: flex;
+    gap: 30px;
+    z-index: 101;
+}
+
+.monster-btn {
+    position: relative;
+    background: rgba(10, 0, 30, 0.8);
+    border: 3px solid #7a00ff;
+    border-radius: 40px;
+    padding: 20px 40px;
+    color: white;
+    text-decoration: none;
+    font-size: 1.2rem;
+    font-weight: bold;
+    box-shadow: 0 0 20px rgba(122, 0, 255, 0.6);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    overflow: visible;
+}
+
+.monster-btn:hover {
+    transform: scale(1.15) translateY(-10px);
+    box-shadow: 0 0 50px rgba(0, 255, 204, 0.9);
+    background: rgba(30, 0, 60, 0.95);
+    border-color: #00ffcc;
+}
+
+.monster-btn .eyes {
+    position: absolute;
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 12px;
+}
+
+.monster-btn .eye {
+    width: 26px;
+    height: 26px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 0 15px rgba(255,255,255,0.9);
+    position: relative;
+    overflow: hidden;
+    border: 3px solid #7a00ff;
+}
+
+.monster-btn .pupil {
+    width: 12px;
+    height: 12px;
+    background: #0a0a0a;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    transition: transform 0.05s linear; /* JavaScript updates matrix continuously */
+}
