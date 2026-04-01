@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Powered ATS System</title>
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4f46e5',
+                        secondary: '#ec4899',
+                        dark: '#0f172a'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-slate-900 text-white font-['Outfit'] min-h-screen overflow-x-hidden relative">
+    
+    <!-- Background Gradients -->
+    <div class="fixed top-[-20%] left-[-10%] w-[50%] h-[50%] bg-primary/20 blur-[120px] rounded-full pointer-events-none"></div>
+    <div class="fixed bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-secondary/20 blur-[120px] rounded-full pointer-events-none"></div>
+
+    <!-- Navbar -->
+    <nav class="glass-header sticky top-0 z-50 px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center font-bold text-xl">
+                A
+            </div>
+            <span class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
+                AutoATS AI
+            </span>
+        </div>
+        <div class="text-sm text-slate-400">
+            Version 1.0 (MVP)
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-12 relative z-10 max-w-6xl">
+        <div class="text-center mb-16 animate-fade-in">
+            <h1 class="text-5xl md:text-6xl font-bold mb-6">Akıllı CV Analiz ve <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Skorlama Sistemi</span></h1>
+            <p class="text-slate-400 text-lg max-w-2xl mx-auto">Yapay zeka desteği ile iş ilanlarınıza başvuran adayların CV'lerini saniyeler içinde analiz edin, eşleştirin ve en uygun adayları bulun.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            
+            <!-- Left Panel: Upload Form -->
+            <div class="glass-panel rounded-3xl p-8 border border-white/10 animate-slide-up" style="animation-delay: 0.1s;">
+                <h2 class="text-2xl font-semibold mb-6 flex items-center gap-3">
+                    <i class="fa-solid fa-cloud-arrow-up text-primary"></i> Yeni Analiz
+                </h2>
+                
+                <form id="uploadForm" class="space-y-6">
+                    <!-- Job Description -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-2">İş İlanı Gereksinimleri</label>
+                        <textarea id="jobDescription" rows="5" class="w-full bg-slate-800/50 border border-slate-700 rounded-xl p-4 text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" placeholder="Aradığınız pozisyon için gerekli yetenekleri ve deneyimleri yazın... (Örn: Python, SQL ve 3 yıl veri analizi tecrübesi)"></textarea>
+                    </div>
+
+                    <!-- CV Upload -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-2">Adayın CV'si (PDF/DOCX)</label>
+                        <div class="border-2 border-dashed border-slate-600 rounded-xl p-8 text-center hover:border-primary hover:bg-slate-800/30 transition-all cursor-pointer group" id="dropZone">
+                            <input type="file" id="cvFile" accept=".pdf,.doc,.docx" class="hidden">
+                            <i class="fa-solid fa-file-pdf text-4xl text-slate-500 group-hover:text-primary transition-colors mb-4"></i>
+                            <p class="text-slate-400 font-medium">Dosyayı buraya sürükleyin veya <span class="text-primary">bilgisayardan seçin</span></p>
+                            <p class="text-xs text-slate-500 mt-2">Max 5MB</p>
+                            <p id="fileNameDisplay" class="text-sm font-semibold text-secondary mt-3 hidden"></p>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" id="analyzeBtn" class="w-full py-4 rounded-xl font-bold text-lg bg-gradient-to-r from-primary to-secondary hover:shadow-[0_0_20px_rgba(79,70,229,0.4)] transition-all transform hover:-translate-y-1 relative overflow-hidden group">
+                        <span class="relative z-10 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-microchip"></i> CV'yi Analiz Et
+                        </span>
+                        <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                    </button>
+                </form>
+
+                <!-- Loading Overlay -->
+                <div id="loadingOverlay" class="hidden mt-6 text-center">
+                    <div class="inline-block relative w-16 h-16">
+                        <div class="absolute inset-0 border-4 border-primary/20 rounded-full"></div>
+                        <div class="absolute inset-0 border-4 border-primary rounded-full border-t-transparent animate-spin"></div>
+                    </div>
+                    <p class="text-primary font-medium mt-4 animate-pulse">Yapay Zeka CV'yi Okuyor...</p>
+                </div>
+            </div>
+
+            <!-- Right Panel: Result Dashboard -->
+            <div id="resultPanel" class="glass-panel rounded-3xl p-8 border border-white/10 opacity-50 pointer-events-none transition-all duration-500">
+                <div class="h-full flex flex-col items-center justify-center text-slate-500" id="emptyState">
+                    <i class="fa-solid fa-chart-pie text-6xl mb-4 opacity-50"></i>
+                    <p class="text-lg">Analiz sonucu burada görüntülenecek</p>
+                </div>
+
+                <!-- Actual Results (Hidden initially) -->
+                <div id="resultsContent" class="hidden h-full flex flex-col">
+                    <div class="flex justify-between items-start mb-8">
+                        <div>
+                            <h2 class="text-2xl font-bold" id="candidateName">Aday İsmi</h2>
+                            <p class="text-slate-400 text-sm mt-1" id="candidateContact"><i class="fa-solid fa-envelope mr-2"></i> email@example.com</p>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm text-slate-400 mb-1">Uyumluluk Skoru</div>
+                            <div class="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-500" id="matchScore">0%</div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div class="bg-slate-800/50 p-4 rounded-xl border border-white/5">
+                            <div class="text-xs text-slate-400 mb-1">Tespit Edilen Yetenekler</div>
+                            <div class="font-semibold" id="skillsCount">0 Adet</div>
+                        </div>
+                        <div class="bg-slate-800/50 p-4 rounded-xl border border-white/5">
+                            <div class="text-xs text-slate-400 mb-1">Deneyim Süresi</div>
+                            <div class="font-semibold" id="expYears">Bilinmiyor</div>
+                        </div>
+                    </div>
+
+                    <div class="mb-6 flex-grow">
+                        <h3 class="text-sm font-semibold text-slate-300 mb-3 border-b border-white/10 pb-2">Yetenek Dağılımı</h3>
+                        <div class="h-48 relative">
+                            <canvas id="skillsChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-sm font-semibold text-slate-300 mb-3 border-b border-white/10 pb-2">AI Değerlendirmesi</h3>
+                        <div class="bg-primary/10 border border-primary/20 p-4 rounded-xl text-sm leading-relaxed text-slate-200 shadow-inner" id="aiSummary">
+                            AI değerlendirmesi...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

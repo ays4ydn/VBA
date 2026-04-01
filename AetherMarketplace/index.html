@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aether - AI Tools Marketplace</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">Aether<span>.ai</span></a>
+            <div class="nav-links">
+                <a href="#directory">Directory</a>
+                <a href="#categories">Categories</a>
+                <a href="#pricing">Pricing</a>
+            </div>
+            <div class="nav-actions">
+                <a href="#" class="btn-ghost" id="loginBtn">Log in</a>
+                <a href="#" class="btn-primary">Submit Tool</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="hero-content">
+            <div class="badge">✨ Join 50,000+ creators and builders</div>
+            <h1 class="hero-title">The Future of Work,<br><span class="gradient-text">Curated.</span></h1>
+            <p class="hero-subtitle">Discover, review, and utilize the most powerful AI tools for your workflow. From writing to video generation, find it all on Aether.</p>
+            
+            <div class="search-container">
+                <div class="search-box">
+                    <svg class="search-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" id="searchInput" placeholder="Search for 'AI video editor'...">
+                    <button class="btn-search" id="searchBtn">Search</button>
+                </div>
+            </div>
+            
+            <div class="hero-tags">
+                <span>Popular:</span>
+                <a href="#" class="tag">ChatGPT</a>
+                <a href="#" class="tag">Midjourney</a>
+                <a href="#" class="tag">Notion AI</a>
+                <a href="#" class="tag">Video Gen</a>
+            </div>
+        </div>
+        <div class="hero-glow"></div>
+    </header>
+
+    <!-- Marquee / Featured Strip -->
+    <section class="sponsored-strip">
+        <div class="marquee">
+            <div class="marquee-content">
+                <span>🔥 Trending this week: Copy.ai</span>
+                <span class="dot">•</span>
+                <span>Subtitles: Opus Clip</span>
+                <span class="dot">•</span>
+                <span>Code Assistant: GitHub Copilot</span>
+                <span class="dot">•</span>
+                <span>Image: Leonardo AI</span>
+                <span class="dot">•</span>
+                <span>🔥 Trending this week: Copy.ai</span>
+                <span class="dot">•</span>
+                <span>Subtitles: Opus Clip</span>
+                <span class="dot">•</span>
+                <span>Code Assistant: GitHub Copilot</span>
+                <span class="dot">•</span>
+                <span>Image: Leonardo AI</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content Grid -->
+    <main class="container layout-grid">
+        <!-- Sidebar filters (desktop) -->
+        <aside class="sidebar">
+            <div class="filter-group">
+                <h3>Categories</h3>
+                <ul class="filter-list" id="categoryFilters">
+                    <li><label><input type="checkbox" id="filterAll" checked> All Tools</label></li>
+                    <li><label><input type="checkbox" class="cat-filter" value="Writing & Content"> Writing & Content <span class="count">241</span></label></li>
+                    <li><label><input type="checkbox" class="cat-filter" value="Video Generation"> Video Generation <span class="count">85</span></label></li>
+                    <li><label><input type="checkbox" class="cat-filter" value="Development"> Development <span class="count">112</span></label></li>
+                    <li><label><input type="checkbox" class="cat-filter" value="Design / Images"> Design / Images <span class="count">304</span></label></li>
+                    <li><label><input type="checkbox" class="cat-filter" value="Productivity"> Productivity <span class="count">189</span></label></li>
+                </ul>
+            </div>
+            <div class="filter-group border-top">
+                <h3>Pricing</h3>
+                <ul class="filter-list">
+                    <li><label><input type="checkbox"> Free</label></li>
+                    <li><label><input type="checkbox"> Freemium</label></li>
+                    <li><label><input type="checkbox"> Paid</label></li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Tools Feed -->
+        <section class="tools-feed">
+            <div class="feed-header">
+                <h2>Trending Tools</h2>
+                <div class="sort-dropdown">
+                    <span>Sort by: </span>
+                    <select>
+                        <option>Most Popular</option>
+                        <option>Highest Rated</option>
+                        <option>Newest</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="tools-grid" id="toolsGrid">
+                <!-- Cards injected via JS -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Bento Box Promo -->
+    <section class="container promo-section">
+        <div class="bento-grid">
+            <div class="bento-item featured">
+                <div class="bento-content">
+                    <span class="label">Featured Developer Tool</span>
+                    <h3>Cursor: The AI Code Editor</h3>
+                    <p>Built to make you extraordinarily productive, Cursor is the best way to code with AI.</p>
+                    <a href="#" class="btn-outline">View Details</a>
+                </div>
+            </div>
+            <div class="bento-item stat">
+                <h3>2,400+</h3>
+                <p>AI Tools Indexed</p>
+            </div>
+            <div class="bento-item cta">
+                <h3>Built an AI tool?</h3>
+                <p>Get listed in front of thousands of daily visitors looking for the next big thing in AI.</p>
+                <a href="#" class="btn-primary">Submit Tool →</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter -->
+    <section class="newsletter">
+        <div class="container text-center">
+            <div class="newsletter-box">
+                <h2>Stay ahead of the curve.</h2>
+                <p>Get the top 5 AI tools handpicked and delivered to your inbox every Monday.</p>
+                <form class="newsletter-form">
+                    <input type="email" placeholder="Enter your email address" required>
+                    <button type="submit" class="btn-primary">Subscribe</button>
+                </form>
+                <p class="spam-notice">No spam. Unsubscribe anytime.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <a href="#" class="logo">Aether<span>.ai</span></a>
+                <p>The definitive marketplace to discover, compare, and review AI applications.</p>
+            </div>
+            <div class="footer-links">
+                <h4>Platform</h4>
+                <a href="#">Directory</a>
+                <a href="#">Categories</a>
+                <a href="#">Reviews</a>
+            </div>
+            <div class="footer-links">
+                <h4>Creators</h4>
+                <a href="#">Submit a Tool</a>
+                <a href="#">Advertise</a>
+                <a href="#">Pricing</a>
+            </div>
+            <div class="footer-links">
+                <h4>Legal</h4>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+            </div>
+        </div>
+        <div class="container border-top text-center copyright">
+            <p>&copy; 2026 Aether Marketplace. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeModal">&times;</span>
+            <h2>Welcome Back</h2>
+            <p>Log in to save tools, leave reviews, and access premium features.</p>
+            <form id="loginForm" class="login-form">
+                <input type="email" placeholder="Email Address" required>
+                <input type="password" placeholder="Password" required>
+                <button type="submit" class="btn-primary w-100">Sign In</button>
+            </form>
+            <div class="modal-footer">
+                <p>Don't have an account? <a href="#">Sign up</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- App Usage Modal (Full Screen Iframe) -->
+    <div class="modal app-modal" id="appModal">
+        <div class="app-modal-content">
+            <div class="app-modal-header">
+                <h2 id="appModalTitle">Loading App...</h2>
+                <div class="app-modal-actions">
+                    <a href="#" id="appExternalLink" target="_blank" class="btn-outline" style="padding: 4px 12px; font-size:0.85rem;">Open in new tab ↗</a>
+                    <span class="close-modal" id="closeAppModal" style="position:static;">&times;</span>
+                </div>
+            </div>
+            <div class="app-modal-body">
+                <iframe id="appFrame" src="about:blank" title="AI Tool Viewer" sandbox="allow-same-origin allow-scripts allow-forms allow-popups"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

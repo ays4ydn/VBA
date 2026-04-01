@@ -3,245 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VBA | Developer Portfolio</title>
-    <style>
-        :root {
-            --bg-main: #0a0a0f;
-            --accent-cyan: #00f0ff;
-            --text-main: #ffffff;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            background-color: var(--bg-main);
-            color: var(--text-main);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            overflow: hidden;
-            height: 100vh;
-        }
-
-        canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 1;
-        }
-
-        .container {
-            position: relative;
-            z-index: 10;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-        }
-
-        /* Profile Img */
-        .profile-img-container {
-            margin-bottom: 2rem;
-        }
-        .profile-img {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            border: 3px solid var(--accent-cyan);
-            object-fit: cover;
-            box-shadow: 0 0 20px var(--accent-cyan);
-        }
-
-        h1 { font-size: 3rem; margin-bottom: 1rem; }
-        p { font-size: 1.2rem; color: #888; margin-bottom: 3rem; }
-
-        /* Evasive Button Shell */
-        .btn-wrapper {
-            position: relative;
-            padding: 100px; /* Buffer for hover detection */
-        }
-
-        .monster-btn {
-            background: linear-gradient(45deg, #00f0ff, #0088ff);
-            color: #000;
-            padding: 1rem 2.5rem;
-            border: none;
-            border-radius: 50px;
-            font-weight: 800;
-            font-size: 1.2rem;
-            cursor: pointer;
-            position: relative;
-            transition: transform 0.1s ease-out;
-            box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
-            white-space: nowrap;
-        }
-
-        /* Stage 2 Container */
-        #stage2 {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.9);
-            z-index: 1000;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* Help Cat elements */
-        .pet-cat {
-            position: fixed;
-            z-index: 500;
-            font-size: 3rem;
-            cursor: pointer;
-            transition: opacity 0.5s;
-            pointer-events: none;
-            opacity: 0;
-        }
-        .pet-cat.active { opacity: 1; pointer-events: auto; }
-        
-        .speech-bubble {
-            position: absolute;
-            top: -50px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: white;
-            color: black;
-            padding: 5px 15px;
-            border-radius: 10px;
-            font-size: 0.9rem;
-            font-weight: bold;
-            white-space: nowrap;
-            display: none;
-        }
-        .pet-cat.active .speech-bubble { display: block; }
-    </style>
+    <title>Proje Portali</title>
+    <link rel="stylesheet" href="./portfolio_assets/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <canvas id="particle-canvas"></canvas>
 
-    <main class="container" id="stage1">
+    <main class="container">
+        <!-- Profile Picture: Stage 1 (User Original) -->
         <div class="profile-img-container">
             <img src="./depo/image.png" alt="Profil 1" class="profile-img">
         </div>
-        <h1>VBA PORTFOLIO</h1>
-        <p>Full-Stack Developer</p>
+
+        <!-- Badge -->
+        <div class="badge">
+            <span class="star">✦</span> VBA PROJE PORTFÖYÜ <span class="star">✦</span>
+        </div>
+
+        <!-- Title -->
+        <h1 class="main-title">VBA</h1>
         
-        <div class="btn-wrapper">
-            <button class="monster-btn" id="start-btn">DataCity Dünyasına Gir</button>
+        <!-- Subtitle -->
+        <p class="subtitle">İnteraktif araçlar, görsel araştırmalar & deneyimler</p>
+
+        <!-- Main Button (DataCity) -->
+        <a href="javascript:void(0)" id="main-transition-btn" class="primary-btn">
+            <i class="fa-solid fa-sun icon-pulse"></i> DataCity Dünyasına Gir <i class="fa-solid fa-arrow-right"></i>
+        </a>
+
+        <!-- Secondary Buttons (Grafik & Data) -->
+        <div class="secondary-btns">
+            <a href="./gorsellestirme.png" target="_blank" class="sec-btn">
+                <i class="fa-solid fa-chart-line"></i> Grafik
+            </a>
+            <a href="./data.csv" target="_blank" class="sec-btn">
+                <i class="fa-solid fa-database"></i> Data
+            </a>
         </div>
     </main>
 
-    <div id="stage2">
-        <img src="./depo/image2.png" alt="Profil 2" class="profile-img">
-        <h1 style="margin-top: 1rem;">Hoş Geldiniz!</h1>
-        <p>İkinci Sayfaya Başarıyla Geçtiniz.</p>
-        <!-- Buraya linkleri de ekleyebiliriz -->
-        <div style="margin-top: 2rem;">
-            <a href="./DataCity/index.html" style="color: cyan;">DataCity</a> | 
-            <a href="./ats-system/frontend/index.html" style="color: cyan;">ATS Sistemi</a>
+    <!-- STAGE 2: HOGWARTS & EJDERHA BOYUTU -->
+    <div id="stage2-container" class="hogwarts-scene" style="opacity: 0; pointer-events: none;">
+        <!-- Profile Picture: Stage 2 (User Original) -->
+        <div class="profile-img-container stage2-profile">
+            <img src="./depo/image2.png" alt="Profil 2" class="profile-img">
+        </div>
+        <!-- Ejderha Kütüphanesi İptal Edildi: Sadece Buton Kaldı -->
+        
+        <!-- MERKEZİ BUTON -->
+        <a href="#" id="explore-btn" class="hidden-explore-btn">Keşfetmeye Var mısın?</a>
+
+        <!-- Sihirli Menü Kutucukları ve Oyuncak Harry -->
+        <div class="monster-buttons-wrapper">
+            <div id="harry-potter-toy" onclick="mountBroom()">
+                <div class="harry-torso">
+                    <img src="./portfolio_assets/harry_transparent.png" alt="Torso">
+                </div>
+                <div class="harry-legs">
+                    <img src="./portfolio_assets/harry_transparent.png" alt="Legs">
+                </div>
+                <div id="harry-bubble">Buraya gel, bin şuna! 🧹 (Tıkla!)</div>
+            </div>
+            
+            <div class="monster-buttons">
+                <a href="./DataCity/index.html" class="monster-btn">
+                    DataCity Dünyasına Gir
+                </a>
+                <a href="./gorsellestirme.png" target="_blank" class="monster-btn">
+                    Grafik Ekranı
+                </a>
+                <a href="./data.csv" target="_blank" class="monster-btn">
+                    Saf Veri (CSV)
+                </a>
+            </div>
         </div>
     </div>
 
-    <!-- Help Cats -->
-    <div id="sir-elton" class="pet-cat">🐱
-        <div class="speech-bubble">Yardım lazım mı?</div>
-    </div>
+    <footer>
+        PORTFOLYO &bull; 2026 &bull; Tüm hakları saklıdır
+    </footer>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const canvas = document.getElementById("particle-canvas");
-            const ctx = canvas.getContext("2d");
-            let width, height, planets = [];
-            let mouseX = window.innerWidth/2, mouseY = window.innerHeight/2;
-
-            function initCanvas() {
-                width = canvas.width = window.innerWidth;
-                height = canvas.height = window.innerHeight;
-                planets = [];
-                for(let i=0; i<40; i++) {
-                    planets.push({
-                        x: Math.random() * width, y: Math.random() * height,
-                        radius: Math.random() * 15 + 10,
-                        color: ['#00f0ff', '#a64aff', '#ff4af1'][Math.floor(Math.random()*3)],
-                        vx: 0, vy: 0
-                    });
-                }
-            }
-
-            document.addEventListener('mousemove', (e) => {
-                mouseX = e.clientX; mouseY = e.clientY;
-            });
-
-            function render() {
-                ctx.clearRect(0,0,width,height);
-                planets.forEach(p => {
-                    // Follow mouse with delay
-                    p.x += (mouseX - p.x) * 0.05 + (Math.random()-0.5);
-                    p.y += (mouseY - p.y) * 0.05 + (Math.random()-0.5);
-                    
-                    ctx.beginPath();
-                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI*2);
-                    ctx.fillStyle = p.color;
-                    ctx.fill();
-                    // Simple eyes
-                    ctx.fillStyle = 'white';
-                    ctx.beginPath(); ctx.arc(p.x-5, p.y-5, 3, 0, Math.PI*2); ctx.fill();
-                    ctx.beginPath(); ctx.arc(p.x+5, p.y-5, 3, 0, Math.PI*2); ctx.fill();
-                    ctx.fillStyle = 'black';
-                    ctx.beginPath(); ctx.arc(p.x-5, p.y-5, 1.5, 0, Math.PI*2); ctx.fill();
-                    ctx.beginPath(); ctx.arc(p.x+5, p.y-5, 1.5, 0, Math.PI*2); ctx.fill();
-                });
-                requestAnimationFrame(render);
-            }
-
-            // Evasive Button
-            const btn = document.getElementById('start-btn');
-            let btnX = 0, btnY = 0;
-            let escapeCount = 0;
-
-            document.addEventListener('mousemove', (e) => {
-                const rect = btn.getBoundingClientRect();
-                const btnCenterX = rect.left + rect.width/2;
-                const btnCenterY = rect.top + rect.height/2;
-                const dist = Math.hypot(e.clientX - btnCenterX, e.clientY - btnCenterY);
-
-                if (dist < 150) {
-                    escapeCount++;
-                    const angle = Math.atan2(btnCenterY - e.clientY, btnCenterX - e.clientX);
-                    btnX += Math.cos(angle) * 100;
-                    btnY += Math.sin(angle) * 100;
-                    
-                    // Keep in bounds
-                    if (btnCenterX + btnX < 50 || btnCenterX + btnX > width - 50) btnX = 0;
-                    if (btnCenterY + btnY < 50 || btnCenterY + btnY > height - 50) btnY = 0;
-                    
-                    btn.style.transform = `translate(${btnX}px, ${btnY}px)`;
-
-                    if (escapeCount > 10) showCat();
-                }
-            });
-
-            function showCat() {
-                const cat = document.getElementById('sir-elton');
-                cat.classList.add('active');
-                cat.style.left = (mouseX + 50) + 'px';
-                cat.style.top = (mouseY - 50) + 'px';
-            }
-
-            document.getElementById('sir-elton').onclick = () => {
-                document.getElementById('stage1').style.display = 'none';
-                document.getElementById('stage2').style.display = 'flex';
-                document.getElementById('sir-elton').classList.remove('active');
-            };
-
-            initCanvas();
-            render();
-            window.onresize = initCanvas;
-        });
-    </script>
+    <script src="./portfolio_assets/script.js"></script>
 </body>
 </html>

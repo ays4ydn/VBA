@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Future Self AI - Çekirdek Simülasyon</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet" />
+  <style>
+    :root { --bg: #030303; --cyan: #00f0ff; --magenta: #ff003c; --text: #fff; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+    #root { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }
+
+    /* ERROR BOUNDARY */
+    #error-box { display:none; position:absolute; top:10%; left:50%; transform:translateX(-50%); background:red; color:white; padding:20px; font-weight:bold; z-index:9999; border-radius:10px; width:90%; text-align:center; }
+
+    .app-container { width: 100%; height: 100%; max-width: 500px; max-height: 900px; position: relative; background: #000; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 0 50px rgba(0,240,255,0.1); }
+
+    /* Setup Screen */
+    .setup-screen { padding: 40px 30px; display: flex; flex-direction: column; height: 100%; background: #0a0a0c; z-index: 10; position: absolute; width: 100%; }
+    .setup-screen h1 { font-weight: 900; font-size: 2rem; color: var(--cyan); text-transform: uppercase; margin-bottom: 30px; border-bottom: 2px solid var(--glass); padding-bottom: 10px; }
+    
+    .panel { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 25px; border-radius: 12px; margin-bottom: 20px; display: flex; flex-direction: column; gap: 15px; }
+    .panel label { font-size: 0.85rem; font-weight: 700; color: var(--magenta); text-transform: uppercase; }
+    .panel input, .panel select { background: #000; border: 1px solid rgba(255,255,255,0.2); padding: 15px; color: white; border-radius: 8px; font-family: inherit; }
+    
+    .upload-box { position: relative; border: 2px dashed var(--cyan); background: rgba(0,240,255,0.05); padding: 20px; text-align: center; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+    .upload-box:hover { background: rgba(0,240,255,0.1); }
+    .upload-box input { position: absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer; }
+    .preview-img { width: 80px; height: 80px; object-fit: cover; border-radius: 50%; margin: 10px auto 0; display: block; border: 2px solid var(--cyan); }
+
+    .btn-massive { background: var(--cyan); color: #000; font-weight: 900; font-size: 1.2rem; padding: 20px; border: none; border-radius: 8px; text-transform: uppercase; cursor: pointer; transition: transform 0.2s; margin-top: auto; }
+    .btn-massive:active { transform: scale(0.95); }
+
+    /* Simulation Call Screen */
+    .avatar-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+    .avatar-bg.speaking { filter: brightness(1.2) contrast(1.1); transform: scale(1.02); }
+    .avatar-bg.angry { filter: saturate(1.5) sepia(0.5) hue-rotate(-20deg); transform: scale(1.1); }
+
+    .call-ui { position: absolute; top:0; left:0; width:100%; height:100%; display: flex; flex-direction: column; justify-content: space-between; background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent 20%, transparent 60%, rgba(0,0,0,0.9)); pointer-events:none; }
+    
+    .header { padding: 40px 20px; text-align: center; pointer-events:auto; }
+    .header h2 { font-weight: 900; font-size: 1.8rem; text-shadow: 0 4px 10px #000; }
+    .status { color: var(--cyan); font-weight: 700; letter-spacing: 2px; font-size: 0.8rem; margin-top: 5px; animation: blink 1.5s infinite; }
+    @keyframes blink { 50% { opacity: 0.4; } }
+
+    .user-cam { position: absolute; top: 120px; right: 20px; width: 100px; height: 140px; border: 2px solid rgba(255,255,255,0.2); border-radius: 8px; overflow: hidden; pointer-events:auto; background: #111; }
+    .user-cam video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+
+    .subtitles { margin: 0 20px 20px; background: rgba(0,0,0,0.6); padding: 20px; border-radius: 12px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); font-size: 1.1rem; line-height: 1.5; text-align: center; pointer-events:auto; }
+    
+    .controls { display: flex; justify-content: center; gap: 40px; padding-bottom: 50px; pointer-events:auto; }
+    .mic-btn { width: 80px; height: 80px; border-radius: 50%; border: 3px solid rgba(255,255,255,0.3); background: transparent; font-size: 2rem; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; color: white;}
+    .mic-btn.active { background: var(--magenta); border-color: var(--magenta); transform: scale(1.1); box-shadow: 0 0 30px var(--magenta); }
+    .mic-btn:active { transform: scale(0.9); }
+  </style>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+  <div id="error-box"></div>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    // Fail-Safe Error Catcher
+    window.onerror = function(msg, url, line) {
+      document.getElementById('error-box').style.display = 'block';
+      document.getElementById('error-box').innerHTML = `YAZILIM ÇÖKME HATASI: <br/>${msg}<br/>Satır: ${line}`;
+      return false;
+    };
+
+    const App = () => {
+      // 1. Core State
+      const [inCall, setInCall] = useState(false);
+      const [imageUrl, setImageUrl] = useState('/assets/default_avatar.png');
+      const [voiceName, setVoiceName] = useState('');
+      const [voices, setVoices] = useState([]);
+      const [camStream, setCamStream] = useState(null);
+      const videoRef = useRef(null);
+
+      // 2. Call State
+      const [isListening, setIsListening] = useState(false);
+      const [isSpeaking, setIsSpeaking] = useState(false);
+      const [status, setStatus] = useState('BEKLİYOR...');
+      const [subtitle, setSubtitle] = useState('Sistem başlatıldı. Eylemlerini izliyorum.');
+      const [mood, setMood] = useState('neutral');
+
+      // Initialize System Voices
+      useEffect(() => {
+        const fetchVoices = () => {
+          setVoices(window.speechSynthesis.getVoices());
+        };
+        fetchVoices();
+        if (window.speechSynthesis) window.speechSynthesis.onvoiceschanged = fetchVoices;
+      }, []);
+
+      // Connect Camera when InCall
+      useEffect(() => {
+        if (inCall && camStream && videoRef.current) {
+          videoRef.current.srcObject = camStream;
+        }
+      }, [inCall, camStream]);
+
+      const handleImageUpload = (e) => {
+        const file = e.target.files[0];
+        if(file) setImageUrl(URL.createObjectURL(file));
+      };
+
+      const startSimulation = async () => {
+        setInCall(true);
+        try {
+          // Attempt silently to grab camera
+          const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+          setCamStream(stream);
+        } catch(e) { console.warn("Camera denied."); }
+        
+        // Immediate Voice execution bypassing Autoplay constraints
+        triggerVoice("Simülasyon başlatıldı. Gözümün içine bak. Bugün kendini geliştirmek için ne yaptın?");
+      };
+
+      const triggerVoice = (text, newMood = 'neutral') => {
+        setSubtitle(text);
+        setMood(newMood);
+        setIsSpeaking(true);
+        setStatus('KONUŞUYOR');
+
+        if ('speechSynthesis' in window) {
+          window.speechSynthesis.cancel();
+          const utterance = new SpeechSynthesisUtterance(text);
+          utterance.lang = 'tr-TR';
+          utterance.pitch = newMood === 'angry' ? 0.6 : 0.9;
+          utterance.rate = newMood === 'angry' ? 1.05 : 1.0; 
+          
+          if (voiceName) {
+            const chosen = voices.find(v => v.name === voiceName);
+            if (chosen) utterance.voice = chosen;
+          }
+          
+          utterance.onend = () => {
+            setIsSpeaking(false);
+            setStatus('SİZİ BEKLİYOR');
+            setMood('neutral');
+          };
+          window.speechSynthesis.speak(utterance);
+        }
+      };
+
+      const handleSpeak = () => {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) return alert("Tarayıcın mikrofon dinlemesini desteklemiyor (Chrome kullan).");
+        
+        const rec = new SpeechRecognition();
+        rec.lang = 'tr-TR';
+        
+        try {
+          if (isSpeaking) window.speechSynthesis.cancel();
+          
+          rec.start();
+          setIsListening(true);
+          setStatus('SİZİ DİNLİYOR...');
+          setSubtitle('...');
+          
+          rec.onresult = async (e) => {
+            const text = e.results[0][0].transcript;
+            setSubtitle(`Sen: "${text}"`);
+            setStatus('BEYİN İŞLİYOR (API)...');
+            
+            // Send to FastAPI Python Server
+            try {
+              const response = await fetch('http://localhost:8000/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  user_state: { discipline: 50, stress: 50 }, 
+                  message: text,
+                  persona_name: "Gelecek Sen"
+                })
+              });
+              if(!response.ok) throw new Error("Sunucu yanıt vermedi.");
+              const data = await response.json();
+              triggerVoice(data.response, data.new_mood);
+            } catch(apiErr) {
+               triggerVoice("Arka plan sunucun çökmüş. Terminalini kapatma veya bağlantını düzelt. Mazeret dinlemek istemiyorum.", "angry");
+            }
+          };
+
+          rec.onerror = () => { setIsListening(false); setStatus('HATA / BEKLİYOR'); };
+          rec.onspeechend = () => { setIsListening(false); rec.stop(); };
+        } catch(e) { setIsListening(false); }
+      };
+
+      if (!inCall) {
+        return (
+          <div className="app-container">
+            <div className="setup-screen">
+              <h1>Çekirdek Sistem</h1>
+              
+              <div className="panel">
+                <label>1. FİZİKSEL FORM (Avatara dönüşecek fotoğraf)</label>
+                <div className="upload-box">
+                  <strong>📸 BURAYA TIKLA VE FOTOĞRAF SEÇ</strong>
+                  <input type="file" accept="image/*" onChange={handleImageUpload} />
+                  {imageUrl !== '/assets/default_avatar.png' && <img src={imageUrl} className="preview-img" />}
+                </div>
+              </div>
+
+              <div className="panel">
+                <label>2. SES MODÜLÜ (Sistem Seslerinden Seç)</label>
+                <select value={voiceName} onChange={(e)=>setVoiceName(e.target.value)}>
+                  <option value="">Varsayılan İşletim Sistemi Sesi</option>
+                  {voices.map(v => <option key={v.name} value={v.name}>{v.name} ({v.lang})</option>)}
+                </select>
+              </div>
+
+              <button className="btn-massive" onClick={startSimulation}>SİSTEMİ BAŞLAT</button>
+            </div>
+          </div>
+        );
+      }
+
+      return (
+        <div className="app-container">
+          <img 
+            src={imageUrl} 
+            className={`avatar-bg ${mood} ${isSpeaking ? 'speaking' : ''}`} 
+            onError={(e) => { e.target.src = '/assets/default_avatar.png'; }}
+          />
+          <div className="call-ui">
+            <div className="header">
+              <h2>GELECEK SEN</h2>
+              <div className="status">{status}</div>
+            </div>
+            
+            <div className="user-cam">
+              {camStream ? <video ref={videoRef} autoPlay playsInline muted></video> : <div style={{padding:20,color:'red',textAlign:'center'}}>KAMERA YOK</div>}
+            </div>
+
+            <div style={{flex:1}}></div>
+            
+            <div className="subtitles">{subtitle}</div>
+            
+            <div className="controls">
+              <button className={`mic-btn ${isListening ? 'active' : ''}`} onMouseDown={handleSpeak} onTouchStart={handleSpeak}>🎙️</button>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
