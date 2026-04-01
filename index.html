@@ -4,90 +4,195 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VBA | Developer Portfolio</title>
-    <link rel="stylesheet" href="./portfolio_assets/styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --accent: #38bdf8;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            margin-top: 2rem;
+        }
+
+        /* Header / Profile Section */
+        header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .profile-img {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            border: 4px solid var(--accent);
+            object-fit: cover;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 0 30px rgba(56, 189, 248, 0.3);
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            letter-spacing: -1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .tagline {
+            color: var(--accent);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.9rem;
+        }
+
+        /* Project Grid */
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            width: 100%;
+        }
+
+        .project-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .project-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .project-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .project-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+
+        .project-desc {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn {
+            display: inline-block;
+            background: var(--accent);
+            color: var(--bg);
+            text-decoration: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 700;
+            text-align: center;
+            transition: opacity 0.2s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        footer {
+            margin-top: auto;
+            padding: 4rem 0 2rem;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+    </style>
 </head>
 <body>
-    <canvas id="particle-canvas"></canvas>
 
-    <main class="container">
-        <!-- Profile Picture: Stage 1 (User Original) -->
-        <div class="profile-img-container">
-            <img src="./depo/image.png" alt="Profil 1" class="profile-img">
-        </div>
+    <header>
+        <img src="./depo/image.png" alt="VBA Profile" class="profile-img">
+        <h1>VBA <span style="color: var(--accent)">PORTFOLYO</span></h1>
+        <div class="tagline">Full-Stack Geliştirici & AI Araştırmacı</div>
+    </header>
 
-        <!-- Badge -->
-        <div class="badge">
-            <span class="badge-dot"></span>
-            Open to Collaboration
-        </div>
-
-        <!-- Hero Content -->
-        <h1 class="main-title">
-            VBA <span class="highlight">PORTFOLIO</span>
-        </h1>
-        <p class="subtitle">Artificial Intelligence • Interactive Design • Web Specialist</p>
-
-        <!-- Glass UI Stage 1 -->
-        <div class="glass-container">
-            <div class="stats-row">
-                <div class="stat-item">
-                    <span class="stat-value">5+</span>
-                    <span class="stat-label">Years XP</span>
+    <div class="container">
+        <div class="project-grid">
+            <!-- DataCity -->
+            <div class="project-card">
+                <div>
+                    <div class="project-icon">🏙️</div>
+                    <h2 class="project-title">DataCity</h2>
+                    <p class="project-desc">Küresel Şehir ve Yaşam Simülasyonu. İstatistiksel verilere dayanan interaktif 3D dünya deneyimi.</p>
                 </div>
-                <div class="stat-item">
-                    <span class="stat-value">50+</span>
-                    <span class="stat-label">Projects</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-value">24/7</span>
-                    <span class="stat-label">Support</span>
-                </div>
+                <a href="./DataCity/index.html" class="btn">Dünyayı Keşfet</a>
             </div>
 
-            <div class="button-grid">
-                <button class="monster-btn" id="start-btn">DataCity Dünyasına Gir</button>
-            </div>
-        </div>
-    </main>
-
-    <!-- Stage 2: Hogwarts / Dragon Scene -->
-    <div id="stage2-container" class="hogwarts-scene" style="display: none; opacity: 0; pointer-events: none;">
-        <!-- Profile Picture: Stage 2 (User Original) -->
-        <div class="profile-img-container stage2-profile">
-            <img src="./depo/image2.png" alt="Profil 2" class="profile-img">
-        </div>
-        <!-- Ejderha Kütüphanesi İptal Edildi: Sadece Buton Kaldı -->
-        
-        <div class="castle-background">
-            <img src="./portfolio_assets/hogwarts.png" alt="Hogwarts" class="hogwarts-castle">
-            
-            <!-- Harry Potter Sprite -->
-            <div id="harry-potter-toy" class="harry-sprite walking">
-                <img src="./portfolio_assets/harry_transparent.png" alt="Harry">
-                <!-- Harry Konuşma Balonu -->
-                <div id="harry-bubble" class="speech-bubble harry-speech">
-                    Hogwarts'a Hoş Geldin! ⚡
+            <!-- ATS System -->
+            <div class="project-card">
+                <div>
+                    <div class="project-icon">📄</div>
+                    <h2 class="project-title">ATS Sistemi</h2>
+                    <p class="project-desc">Yapay Zeka Destekli Aday Takip Sistemi. CV analizi ve yetenek eşleştirme platformu.</p>
                 </div>
+                <a href="./ats-system/frontend/index.html" class="btn">Sistemi İncele</a>
             </div>
-        </div>
 
-        <div class="stage2-ui">
-            <h2 class="stage2-title">Hogwarts Kütüphanesi</h2>
-            <div class="dragon-btns">
-                <button class="monster-btn explorer-btn" id="explore-btn">Gizli Dosyaları Keşfet</button>
+            <!-- 3. Hafta: Veri Analizi -->
+            <div class="project-card">
+                <div>
+                    <div class="project-icon">📊</div>
+                    <h2 class="project-title">3. Hafta: Veri Analizi</h2>
+                    <p class="project-desc">Sentetik veri üretimi ve normal dağılım (çan eğrisi) analizi görselleştirmesi.</p>
+                </div>
+                <a href="./3. hafta/gorsellestirme.png" class="btn">Grafiği Gör</a>
+            </div>
+
+            <!-- FutureSelf -->
+            <div class="project-card">
+                <div>
+                    <div class="project-icon">🧬</div>
+                    <h2 class="project-title">FutureSelf</h2>
+                    <p class="project-desc">Kişisel geleceğinizi ve yeteneklerinizi simüle eden AI tabanlı bir kurgu uygulaması.</p>
+                </div>
+                <a href="#" class="btn">Yakında</a>
             </div>
         </div>
     </div>
 
-    <!-- Stamina Cat Elements (Sir Elton & Madonna) -->
-    <div id="sir-elton" class="pet-cat" style="display: none;">
-        <div class="cat-body">🐱</div>
-    </div>
-    <div id="madonna" class="pet-cat" style="display: none;">
-        <div class="cat-body">🐈</div>
-    </div>
+    <footer>
+        &copy; 2026 VBA. Tüm Hakları Saklıdır.
+    </footer>
 
-    <script src="./portfolio_assets/script.js"></script>
 </body>
 </html>
