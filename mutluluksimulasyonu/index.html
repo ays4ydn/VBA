@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Happiness Index Engine</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Local CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Local Libraries -->
+    <script src="lib/d3.v7.min.js"></script>
+    <script src="lib/topojson-client.min.js"></script>
+    <script src="lib/chart.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar / Navigation -->
+        <nav class="sidebar">
+            <div class="logo">
+                <span class="logo-icon">🌍</span>
+                <h1>Happiness<br>Engine <span class="version">v2.0</span></h1>
+            </div>
+            <ul class="nav-links">
+                <li class="active" data-tab="dashboard">
+                    <span class="icon">📊</span> Dashboard
+                </li>
+                <li data-tab="map-view">
+                    <span class="icon">🗺️</span> Dünya Haritası
+                </li>
+                <li data-tab="simulation">
+                    <span class="icon">🤖</span> Simülasyon Motoru
+                </li>
+                <li data-tab="analysis">
+                    <span class="icon">🔍</span> Zaman & Analiz
+                </li>
+                <li data-tab="scenarios">
+                    <span class="icon">🧪</span> Senaryolar
+                </li>
+            </ul>
+            <div class="sidebar-footer" style="padding: 1.2rem; font-size: 0.75rem; line-height: 1.4;">
+                <p style="color: var(--accent-gold); font-weight: bold; margin-bottom: 6px;">7 Küresel Veri Kaynağı:</p>
+                <ul style="list-style: none; display: flex; flex-direction: column; gap: 4px;">
+                    <li><strong style="color:#fff;">1. WHR:</strong> Ana Simülasyon Verisi</li>
+                    <li><strong style="color:#fff;">2. World Bank:</strong> Kişi Başı GDP Data</li>
+                    <li><strong style="color:#fff;">3. WHO:</strong> Life Expectancy</li>
+                    <li><strong style="color:#fff;">4. UNESCO:</strong> School Enrollment</li>
+                    <li><strong style="color:#fff;">5. OECD:</strong> Better Life / Denge</li>
+                    <li><strong style="color:#fff;">6. OpenAQ:</strong> PM2.5 Çevre Kalitesi</li>
+                    <li><strong style="color:#fff;">7. Kaggle:</strong> Hazır Core Dataset</li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="topbar">
+                <div class="year-selector">
+                    <label for="year-slider" class="slider-label">Zaman Makinesi (Yıl):</label>
+                    <input type="range" id="year-slider" min="0" max="3" step="1" value="3">
+                    <span id="current-year-display" class="year-display-large">2024</span>
+                </div>
+                <div class="actions" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                    <div style="background: rgba(59, 130, 246, 0.15); border: 1px solid var(--accent-blue); padding: 5px 12px; border-radius: 6px; font-size: 0.75rem; color: var(--accent-blue); font-weight: 600;">
+                        📊 149 Ülke | 2015-2024 | 50.000+ Veri Noktası
+                    </div>
+                    <button id="color-blind-toggle" class="btn btn-outline" aria-label="Renk Körlüğü Modu" title="Renk Körlüğü Modu">👁️</button>
+                    <button class="btn btn-secondary" onclick="app.exportDataCSV()">Senaryoyu İndir (CSV)</button>
+                    <button class="btn btn-primary" onclick="window.print()">Raporu Yazdır</button>
+                </div>
+            </header>
+
+            <div class="tab-contents">
+                <!-- 1. Dashboard Tab -->
+                <section id="dashboard" class="tab-pane active">
+                    <div class="header-section" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                        <div>
+                            <h2>Global Görünüm <span class="year-badge">2024</span></h2>
+                            <p class="subtitle">Dünya mutluluk endeksi özeti ve en önemli veriler.</p>
+                        </div>
+                        <div style="background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.05); padding: 8px 15px; border-radius: 8px; display: flex; align-items: center; gap: 12px;">
+                            <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: bold; text-transform: uppercase;">Global Trend</span>
+                            <svg width="80" height="24" viewBox="0 0 80 24" style="overflow: visible;">
+                                <path d="M 0 20 Q 15 5 35 12 T 65 6 T 80 2" fill="none" stroke="var(--accent-green)" stroke-width="2" stroke-linecap="round"></path>
+                                <circle cx="80" cy="2" r="2.5" fill="var(--accent-gold)"></circle>
+                            </svg>
+                            <span style="font-size: 0.85rem; color: var(--accent-green); font-weight: bold;">+2.1%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="kpi-grid">
+                        <div class="kpi-card">
+                            <h3>Global Ortalama Skor</h3>
+                            <div class="value" id="kpi-global-score">5.42</div>
+                            <div class="trend positive">↑ %2.1 (2020'den beri)</div>
+                        </div>
+                        <div class="kpi-card">
+                            <h3>En Mutlu Bölge</h3>
+                            <div class="value" id="kpi-top-region">Avrupa</div>
+                            <div class="trend">Ortalama: 6.80</div>
+                        </div>
+                        <div class="kpi-card">
+                            <h3>Lider Ülke</h3>
+                            <div class="value" id="kpi-top-country">Finlandiya</div>
+                            <div class="trend positive">7 Yıl Üst Üste</div>
+                        </div>
+                        <div class="kpi-card">
+                            <h3 style="display: flex; justify-content: space-between; align-items: center;">
+                                <span>En Yüksek Korelasyon</span>
+                                <span title="Pearson Correlation&#10;2015–2024 verileri kullanılmıştır." style="cursor:help; font-size:0.75rem; background:rgba(255,255,255,0.1); width:15px; height:15px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; color:var(--text-muted);">i</span>
+                            </h3>
+                            <div class="value" id="kpi-correlation">GDP & Sağlık</div>
+                            <div class="trend">r = 0.82</div>
+                        </div>
+                    </div>
+
+                    <!-- 7-Boyutlu Küresel Veri Entegrasyonu Raporu -->
+                    <div class="card verification-card" style="margin-bottom: 2rem; border-left: 4px solid var(--accent-gold); background: rgba(245, 158, 11, 0.04);">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <span style="font-size: 1.4rem;">🎯</span>
+                            <h3 style="margin: 0; border: none; padding: 0; color: var(--accent-gold);">7-Kademeli Küresel Veri Mimarisi ve Araştırma Soruları</h3>
+                        </div>
+                        <p style="font-size: 0.95rem; color: #d1d5db; line-height: 1.5; margin-bottom: 12px;">
+                            Mutluluğu etkileyen farklı alanlardan ve saygın uluslararası platformlardan saf veriler topluyor, kapsamlı bir matriste simüle ediyoruz:
+                        </p>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; font-size: 0.85rem; color: var(--text-muted);">
+                            <div style="background: rgba(0,0,0,0.2); padding: 8px; border-radius: 6px;">
+                                <strong style="color:var(--accent-blue);">💰 1-2. WHR & World Bank GDP:</strong><br>
+                                <em style="color:#fff;">"Zengin ülkeler daha mı mutlu?"</em> Kişi başı düşen gelir ve ana mutluluk payları analizi.
+                            </div>
+                            <div style="background: rgba(0,0,0,0.2); padding: 8px; border-radius: 6px;">
+                                <strong style="color:var(--accent-green);">🏥 3. WHO Platformu:</strong><br>
+                                <em style="color:#fff;">"Sağlıklı yaşam mutluluğu artırıyor mu?"</em> Life Expectancy (Yaşam Beklentisi) etki katsayısı.
+                            </div>
+                            <div style="background: rgba(0,0,0,0.2); padding: 8px; border-radius: 6px;">
+                                <strong style="color:var(--accent-gold);">📚 4. UNESCO Explorer:</strong><br>
+                                <em style="color:#fff;">"Eğitim seviyesi mutluluğu etkiliyor mu?"</em> School enrollment (Okullaşma) oranları.
+                            </div>
+                            <div style="background: rgba(0,0,0,0.2); padding: 8px; border-radius: 6px;">
+                                <strong style="color:var(--accent-yellow);">🌱 5-6. OECD & OpenAQ:</strong><br>
+                                <em style="color:#fff;">"Temiz çevre ve denge önemli mi?"</em> PM2.5 hava kalitesi ve Better Life denge ağırlıkları.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-grid">
+                        <div class="card ranking-card">
+                            <h3>Top 10 Ülke Sıralaması</h3>
+                            <div class="table-container">
+                                <table id="ranking-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Sıra</th>
+                                            <th>Ülke</th>
+                                            <th>Skor</th>
+                                            <th>Trend</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- JS will populate this -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="card chart-card">
+                            <h3>Bölgesel Dağılım</h3>
+                            <div class="chart-wrapper" style="position: relative; width: 100%; height: 300px;">
+                                <canvas id="regional-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. Map View Tab -->
+                <section id="map-view" class="tab-pane">
+                    <div class="header-section">
+                        <h2>Canlı Choropleth Dünya Haritası & Aktif Oranlar</h2>
+                        <p class="subtitle">Ülkelerin coğrafi dağılımı ve içlerine işlenmiş anlık simülasyon mutluluk oranları.</p>
+                    </div>
+                    <style>
+                        @media(max-width: 1024px) {
+                            .map-layout-grid { grid-template-columns: 1fr !important; }
+                        }
+                    </style>
+                    <div style="display: grid; grid-template-columns: 1fr 300px; gap: 1.5rem;" class="map-layout-grid">
+                        <div class="map-container card" style="height: 600px; padding: 0; overflow: hidden; position: relative;">
+                            <svg id="world-map" style="width: 100%; height: 100%;"></svg>
+                            <div id="map-tooltip" class="tooltip hidden"></div>
+                        </div>
+                        <div class="card active-rates-card" style="display: flex; flex-direction: column; max-height: 600px; overflow-y: auto; padding: 1.2rem;">
+                            <h3 style="font-size: 1rem; color: var(--accent-gold); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                                <span>🌐</span> Canlı Bölge Oranları
+                            </h3>
+                            <div id="active-region-rates-list" style="display: flex; flex-direction: column; gap: 10px;">
+                                <!-- JS will populate this live -->
+                            </div>
+                            <h3 style="font-size: 1rem; color: var(--accent-blue); margin-top: 20px; margin-bottom: 12px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; display: flex; align-items: center; gap: 8px;">
+                                <span>📌</span> Odak Ülke Bilgisi
+                            </h3>
+                            <div id="map-selected-country-info" style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5;">
+                                Haritadan bir ülkenin üzerine gelerek detaylı saf oranlarını burada görebilirsiniz.
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 3. Simulation Motoru Tab -->
+                <section id="simulation" class="tab-pane">
+                    <div class="header-section">
+                        <h2>Makine Öğrenmesi İmitasyonu: Tahmin Sistemi</h2>
+                        <p class="subtitle">Ağırlıkları veya ülke değerlerini değiştirerek global sıralamayı anlık simüle edin.</p>
+                    </div>
+                    
+                    <div class="simulation-grid">
+                        <!-- Model Equation -->
+                        <div class="card equation-card full-width" style="border-top: 4px solid var(--accent-gold);">
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+                                <span style="font-size: 1.4rem;">📐</span>
+                                <h3 style="margin: 0; border: none; padding: 0; color: var(--accent-gold);">Mutluluk Hesaplama Modeli (Canlı Matris Denklemi)</h3>
+                            </div>
+                            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 12px;">Sistem aşağıdaki doğrusal denklemi kullanarak 149 ülkenin skorunu anlık simüle eder:</p>
+                            <div style="background: rgba(0,0,0,0.4); border: 1px dashed var(--accent-gold); padding: 1.2rem; border-radius: 8px; text-align: center; font-family: monospace; font-size: 1.15rem; color: #fff; margin-bottom: 1.5rem; overflow-x: auto;">
+                                <span style="color:var(--accent-green);">Happiness Score</span> = 
+                                (<span id="w-gdp" style="color:var(--accent-gold);">0.15</span> × GDP) + 
+                                (<span id="w-health" style="color:var(--accent-gold);">0.15</span> × Health) + 
+                                (<span id="w-social" style="color:var(--accent-gold);">0.15</span> × Social Support) + 
+                                (<span id="w-edu" style="color:var(--accent-gold);">0.15</span> × Education) + 
+                                (<span id="w-env" style="color:var(--accent-gold);">0.10</span> × Environment) + <br>
+                                <span style="font-size:0.95rem; color:var(--text-muted);">
+                                (<span id="w-bank">0.10</span> × Banking) + 
+                                (<span id="w-free">0.10</span> × Freedom) + 
+                                (<span id="w-gen">0.05</span> × Generosity) + 
+                                (<span id="w-corr">0.05</span> × Corruption)
+                                </span>
+                            </div>
+                            <p class="formula-desc">Ağırlıkları ayarladığınızda, 149 ülkenin skoru <strong>WHR ve Dünya Bankası saf ham verileri</strong> kullanılarak yeniden hesaplanır.</p>
+                            
+                            <div class="weight-sliders">
+                                <div class="slider-group">
+                                    <label>Log GDP Ağırlığı <span class="val">15%</span></label>
+                                    <input type="range" class="weight-input" data-factor="gdp" min="0" max="100" value="15">
+                                </div>
+                                <div class="slider-group">
+                                    <label>Sosyal Destek Ağırlığı <span class="val">15%</span></label>
+                                    <input type="range" class="weight-input" data-factor="social" min="0" max="100" value="15">
+                                </div>
+                                <div class="slider-group">
+                                    <label>Sağlık Ağırlığı <span class="val">15%</span></label>
+                                    <input type="range" class="weight-input" data-factor="health" min="0" max="100" value="15">
+                                </div>
+                                <div class="slider-group">
+                                    <label>Eğitim (Okullaşma) Ağırlığı <span class="val">15%</span></label>
+                                    <input type="range" class="weight-input" data-factor="education" min="0" max="100" value="15">
+                                </div>
+                                <div class="slider-group">
+                                    <label>Banka (Kredi/GDP) Ağırlığı <span class="val">10%</span></label>
+                                    <input type="range" class="weight-input" data-factor="banking" min="0" max="100" value="10">
+                                </div>
+                                <div class="slider-group">
+                                    <label>Çevre (Orman %) Ağırlığı <span class="val">10%</span></label>
+                                    <input type="range" class="weight-input" data-factor="environment" min="0" max="100" value="10">
+                                </div>
+                                <div class="slider-group">
+                                    <label>Özgürlük Ağırlığı <span class="val">10%</span></label>
+                                    <input type="range" class="weight-input" data-factor="freedom" min="0" max="100" value="10">
+                                </div>
+                                <div class="slider-group">
+                                    <label>Cömertlik Ağırlığı <span class="val">5%</span></label>
+                                    <input type="range" class="weight-input" data-factor="generosity" min="0" max="100" value="5">
+                                </div>
+                                <div class="slider-group">
+                                    <label>Yolsuzluk Ağırlığı <span class="val">5%</span></label>
+                                    <input type="range" class="weight-input" data-factor="corruption" min="0" max="100" value="5">
+                                </div>
+                            </div>
+                            <button class="btn btn-primary mt-2" id="btn-recalculate-global">Global Sıralamayı Yeniden Hesapla</button>
+                        </div>
+
+                        <!-- Predict Custom Country -->
+                        <div class="card create-country-card" style="border-top: 4px solid var(--accent-blue);">
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+                                <span style="font-size: 1.4rem;">🎮</span>
+                                <h3 style="margin: 0; border: none; padding: 0; color: var(--accent-blue);">Tahmin Sistemi: Kendi Ülkeni Oluştur</h3>
+                            </div>
+                            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">Aşağıdaki parametreleri kaydırarak simülasyon motorunun tahmini mutluluk skorunu ve dünya sıralamasını canlı görün.</p>
+                            
+                            <div class="form-group" style="margin-bottom: 12px;">
+                                <label style="font-size: 0.85rem; color: #e5e7eb; display: flex; justify-content: space-between;"><span>Ülke Adı:</span></label>
+                                <input type="text" id="custom-country-name" value="Ütopya" style="padding: 6px 10px; font-size: 0.9rem;" oninput="document.getElementById('custom-res-name').textContent=this.value;">
+                            </div>
+                            
+                            <!-- Sliders -->
+                            <div class="slider-group" style="margin-bottom: 10px;">
+                                <label style="font-size: 0.85rem; color: var(--text-muted); display: flex; justify-content: space-between;"><span>💰 Ekonomik GDP Payı:</span> <strong id="val-cust-gdp" style="color:var(--accent-gold);">1.40</strong></label>
+                                <input type="range" id="custom-gdp" min="0.0" max="2.3" step="0.02" value="1.40" oninput="document.getElementById('val-cust-gdp').textContent=parseFloat(this.value).toFixed(2); if(window.app) app.predictCustomCountry();">
+                            </div>
+                            
+                            <div class="slider-group" style="margin-bottom: 10px;">
+                                <label style="font-size: 0.85rem; color: var(--text-muted); display: flex; justify-content: space-between;"><span>🏥 Sağlık Yaşam Beklentisi:</span> <strong id="val-cust-health" style="color:var(--accent-green);">0.85</strong></label>
+                                <input type="range" id="custom-health" min="0.0" max="1.1" step="0.01" value="0.85" oninput="document.getElementById('val-cust-health').textContent=parseFloat(this.value).toFixed(2); if(window.app) app.predictCustomCountry();">
+                            </div>
+                            
+                            <div class="slider-group" style="margin-bottom: 10px;">
+                                <label style="font-size: 0.85rem; color: var(--text-muted); display: flex; justify-content: space-between;"><span>🤝 Sosyal Destek Payı:</span> <strong id="val-cust-social" style="color:var(--accent-blue);">1.20</strong></label>
+                                <input type="range" id="custom-social" min="0.0" max="1.6" step="0.02" value="1.20" oninput="document.getElementById('val-cust-social').textContent=parseFloat(this.value).toFixed(2); if(window.app) app.predictCustomCountry();">
+                            </div>
+                            
+                            <div class="slider-group" style="margin-bottom: 10px;">
+                                <label style="font-size: 0.85rem; color: var(--text-muted); display: flex; justify-content: space-between;"><span>📚 Eğitim (% Okullaşma):</span> <strong id="val-cust-edu" style="color:var(--accent-yellow);">95%</strong></label>
+                                <input type="range" id="custom-edu" min="30" max="130" step="1" value="95" oninput="document.getElementById('val-cust-edu').textContent=this.value+'%'; if(window.app) app.predictCustomCountry();">
+                            </div>
+                            
+                            <div class="slider-group" style="margin-bottom: 10px;">
+                                <label style="font-size: 0.85rem; color: var(--text-muted); display: flex; justify-content: space-between;"><span>🌱 Çevre (% Orman/Hava):</span> <strong id="val-cust-env" style="color:var(--accent-yellow);">40%</strong></label>
+                                <input type="range" id="custom-env" min="0" max="100" step="1" value="40" oninput="document.getElementById('val-cust-env').textContent=this.value+'%'; if(window.app) app.predictCustomCountry();">
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                <div class="slider-group" style="margin-bottom: 5px;">
+                                    <label style="font-size: 0.75rem;">Özgürlük: <span id="val-cust-free">0.60</span></label>
+                                    <input type="range" id="custom-free" min="0.0" max="0.8" step="0.02" value="0.60" oninput="document.getElementById('val-cust-free').textContent=parseFloat(this.value).toFixed(2); if(window.app) app.predictCustomCountry();">
+                                </div>
+                                <div class="slider-group" style="margin-bottom: 5px;">
+                                    <label style="font-size: 0.75rem;">Banka Kredi: <span id="val-cust-bank">100%</span></label>
+                                    <input type="range" id="custom-bank" min="0" max="200" step="5" value="100" oninput="document.getElementById('val-cust-bank').textContent=this.value+'%'; if(window.app) app.predictCustomCountry();">
+                                </div>
+                            </div>
+
+                            <!-- Gizli diğer paylar standart atansın -->
+                            <input type="hidden" id="custom-gen" value="0.25">
+                            <input type="hidden" id="custom-corr" value="0.30">
+                            
+                            <div id="prediction-result" class="result-box" style="margin-top: 15px; background: rgba(16, 185, 129, 0.08); border: 2px dashed var(--accent-green); padding: 1rem;">
+                                <h4 style="font-size: 0.9rem; color: var(--text-muted);"><span id="custom-res-name">Ütopya</span> Tahmini Mutluluk Skoru</h4>
+                                <div class="big-score" style="font-size: 2.5rem; color: var(--accent-green);">7.45</div>
+                                <p style="font-size: 0.85rem; margin-top: 4px;">Bu canlı matris skoru ile <strong id="pred-rank" style="color:#fff;">Dünyada 4.</strong> sıradasınız.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 4. Analysis & Timeline Tab -->
+                <section id="analysis" class="tab-pane">
+                    <div class="header-section">
+                        <h2>Zaman Çizgisi & Korelasyon Analizi</h2>
+                        <p class="subtitle">Verilerin yıllara göre değişimi ve faktörlerin birbirleriyle olan ilişkileri.</p>
+                    </div>
+
+                    <div class="analysis-grid">
+                        <div class="card correlation-card">
+                            <h3>GDP vs Mutluluk Korelasyonu</h3>
+                            <div class="chart-wrapper" style="position: relative; width: 100%; height: 260px;">
+                                <canvas id="scatter-chart"></canvas>
+                            </div>
+                            <div class="analysis-text">
+                                <strong>Analiz Çıktısı:</strong> GDP ile mutluluk arasında güçlü bir logaritmik pozitif ilişki gözlemlenmiştir. Ancak $40.000 seviyesinden sonra GDP'nin mutluluğa katkısı marjinal olarak azalmaktadır (Easterlin Paradoksu).
+                            </div>
+                        </div>
+                        <div class="card timeline-card">
+                            <h3>Karşılaştırmalı Radar Analizi (9 Faktör)</h3>
+                            <div class="country-selector">
+                                <select id="timeline-country-1"></select>
+                                <select id="timeline-country-2"></select>
+                            </div>
+                            <div class="chart-wrapper" style="position: relative; width: 100%; height: 280px;">
+                                <canvas id="timeline-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 5. Scenarios Tab -->
+                <section id="scenarios" class="tab-pane">
+                    <div class="header-section">
+                        <h2>Hazır Senaryolar (What-If)</h2>
+                        <p class="subtitle">Makro kriz ve reformların global mutluluk endeksine anlık etkileri.</p>
+                    </div>
+
+                    <div class="scenario-grid">
+                        <div class="card scenario-card" data-scenario="crisis">
+                            <div class="icon">📉</div>
+                            <h3>Global Ekonomik Kriz</h3>
+                            <p>Tüm ülkelerin GDP Payı 0.2 ve Sosyal Destek Payı 0.1 düşerse sıralama nasıl değişir?</p>
+                            <button class="btn btn-outline" onclick="app.runScenario('crisis')">Senaryoyu Çalıştır</button>
+                        </div>
+                        <div class="card scenario-card" data-scenario="health">
+                            <div class="icon">🏥</div>
+                            <h3>Sağlık Reformu</h3>
+                            <p>Sağlık Payı 0.6'nın altında olan ülkeler +0.15 kazanırsa ne olur?</p>
+                            <button class="btn btn-outline" onclick="app.runScenario('health')">Senaryoyu Çalıştır</button>
+                        </div>
+                        <div class="card scenario-card" data-scenario="freedom">
+                            <div class="icon">🕊️</div>
+                            <h3>Özgürlük Atılımı</h3>
+                            <p>Tüm ülkelerin Özgürlük Payı +0.1 artarsa ne olur?</p>
+                            <button class="btn btn-outline" onclick="app.runScenario('freedom')">Senaryoyu Çalıştır</button>
+                        </div>
+                        <div class="card scenario-card" data-scenario="reset">
+                            <div class="icon">🔄</div>
+                            <h3>Gerçek Verilere Dön</h3>
+                            <p>Tüm simülasyonları sıfırla ve gerçek verilere dön.</p>
+                            <button class="btn btn-danger" onclick="app.resetData()">Sıfırla</button>
+                        </div>
+                    </div>
+
+                    <div class="card mt-2">
+                        <h3>Senaryo Sonucu - Etkilenen Top 5 Ülke</h3>
+                        <table id="scenario-result-table">
+                            <thead>
+                                <tr>
+                                    <th>Ülke</th>
+                                    <th>Eski Skor</th>
+                                    <th>Yeni Skor</th>
+                                    <th>Değişim</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td colspan="4" class="text-center">Henüz bir senaryo çalıştırılmadı.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Application Scripts -->
+    <script src="js/data.js"></script>
+    <script src="js/engine.js"></script>
+    <script src="js/world_map_data.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
